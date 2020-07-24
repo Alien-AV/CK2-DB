@@ -12,6 +12,9 @@ import get_bloodline
 
 import sqlite3
 import re
+import zipfile
+import tempfile
+import os
 
 def load_data(filename):
 	# connect and get a cursor
@@ -30,11 +33,15 @@ def load_data(filename):
 	print('Preloading traits...')
 	get_traits.get_traits(cur)
 
+	temp_dir = None
 	with io.open(filename, "rb") as f:
 		label = f.read(2) # Get byte object
 		if label == b"PK": # I don't know if the beginning is just PK or PK3
-			print("This file is a zip-compressed file, exiting...")
-			quit()
+			print("This file is a zip-compressed file, unpacking...")
+			with zipfile.ZipFile(filename, 'r') as zip_ref:
+				temp_dir = tempfile.TemporaryDirectory(prefix="ck2db-unpacked-")
+				zip_ref.extractall(temp_dir.name)
+			filename=os.path.join(temp_dir.name, os.path.basename(filename))
 		elif label == b"CK": # If PK3, then we should check CK2
 			print("Reading CK2 file...")
 		else: # Ironman mode files???
