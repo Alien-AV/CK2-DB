@@ -11,6 +11,7 @@ import get_traits
 import get_bloodline
 
 import sqlite3
+import re
 
 def load_data(filename):
 	# connect and get a cursor
@@ -42,6 +43,8 @@ def load_data(filename):
 
 	# parse the file and fill the tables with data
 	with io.open(filename, encoding="cp1252") as f:
+		print('Getting metadata...')
+		get_metadata(f, cur)
 		print('Getting dynasties...')
 		get_dynasties.get_dynasties(f, cur)
 		print('Getting characters...')
@@ -60,8 +63,24 @@ def load_data(filename):
 	conn.commit()
 	cur.close()
 	conn.close()
-	
+
 	print("All done!")
+
+
+def get_metadata(file, cur):
+	while True:
+		date_re = re.match("^date=\"(.+)\"", file.readline().strip())
+		if(date_re != None):
+			break
+
+	while True:
+		id_re = re.match("^id=(.+)", file.readline().strip())
+		if(id_re != None):
+			break
+
+	id = int(id_re[1])
+	date = get_chars.make_date(date_re[1])
+	cur.execute("INSERT INTO Metadata VALUES(?, ?)", [id, date])
 
 
 if __name__=='__main__':

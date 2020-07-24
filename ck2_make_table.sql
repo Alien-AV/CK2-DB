@@ -2,6 +2,7 @@
 
 
 
+DROP TABLE IF EXISTS Metadata;
 DROP TABLE IF EXISTS Person;
 DROP TABLE IF EXISTS Marriage;
 DROP TABLE IF EXISTS Trait;
@@ -20,6 +21,11 @@ DROP TABLE IF EXISTS Culture;
 DROP TABLE IF EXISTS BloodLines;
 DROP TABLE IF EXISTS BloodLineMembers;
 
+
+CREATE TABLE Metadata(
+	playerID INT PRIMARY KEY,
+	currentDate DATE
+);
 
 CREATE TABLE Person(
 	personID INT PRIMARY KEY, 
